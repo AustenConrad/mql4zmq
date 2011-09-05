@@ -1,4 +1,5 @@
 
+This project provides <a href="http://docs.mql4.com/">MQL4</a> bindings for the <a href="http://zeromq.org">ZeroMQ</a> networking library.
 
 1) Move the mql4zmq.mqh file to:
 
