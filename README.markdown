@@ -1,6 +1,6 @@
 # mql4zmq
 
-This project provides [MQL4](http://docs.mql4.com/ "MQL4 documentation homepage.") bindings for the [ZeroMQ](http://zeromq.org/ "ZeroMQ homepage.") networking library.
+The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 documentation homepage.") bindings for the [ZeroMQ](http://zeromq.org/ "ZeroMQ homepage.") networking library. This software is in an alpha state. Do not use in production environments yet.
 
 ### To install:
 
