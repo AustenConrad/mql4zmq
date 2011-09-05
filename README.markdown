@@ -10,4 +10,4 @@ This project provides [MQL4](http://docs.mql4.com/ "MQL4 documentation homepage.
 
 ### Example Usage:
 
-`code will be provided when there is working code`
+`code will be provided when there is working code to provide.`
