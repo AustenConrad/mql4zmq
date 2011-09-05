@@ -4,10 +4,10 @@ This project provides [MQL4](http://docs.mql4.com/ "MQL4 documentation homepage.
 
 ### To install:
 
-1. Move the mql4zmq.mqh file to:
+1. Move the mql4zmq.mqh file to: c:\windows\Program Files (x86)\Metatrader\experts\include\mql4zmq.mqh
 
-c:\windows\Program Files (x86)\Metatrader\experts\include\mql4zmq.mqh
+2. Move the mql4zmq.mq4 file to: c:\windows\Program Files (x86)\Metatrader\experts\mql4zmq.mq4
 
-2. Move the mql4zmq.mq4 file to:
+### Example Usage:
 
-c:\windows\Program Files (x86)\Metatrader\experts\mql4zmq.mq4
+'code will be provided when there is working code'
