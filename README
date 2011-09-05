@@ -1,0 +1,9 @@
+
+
+1) Move the mql4zmq.mqh file to:
+
+c:\windows\Program Files (x86)\Metatrader\experts\include\mql4zmq.mqh
+
+2) Move the mql4zmq.mq4 file to:
+
+c:\windows\Program Files (x86)\Metatrader\experts\mql4zmq.mq4
