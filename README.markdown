@@ -10,9 +10,9 @@ The included precompiled `libzmq.dll` is for a 64-bit architecture. If you need 
 
 1. Move `mql4zmq.mqh` to: `c:\windows\Program Files (x86)\Metatrader\experts\include\mql4zmq.mqh`
 
-2. Move `mql4zmq.mq4` to: `c:\windows\Program Files (x86)\Metatrader\experts\mql4zmq.mq4`
+2. Move `libzmq.dll`  to: `c:\windows\Program Files (x86)\Metatrader\experts\libraries\libzmq.dll`
 
-3. Move `libzmq.dll`  to: `c:\window\system32\libzmq.dll`
+3. Move `mql4zmq.mq4` to: `c:\windows\Program Files (x86)\Metatrader\experts\mql4zmq.mq4`
 
 ### Example Usage:
 
