@@ -29,7 +29,7 @@
 //   ((major) * 10000 + (minor) * 100 + (patch))
 //#define ZMQ_VERSION \
 //   ZMQ_MAKE_VERSION(ZMQ_VERSION_MAJOR, ZMQ_VERSION_MINOR, ZMQ_VERSION_PATCH)
-#define ZMQ_VERSION 20109
+#define ZMQ_VERSION 20109  
    
 /*  Run-time API version detection                                            */
 
@@ -230,8 +230,8 @@ int zmq_term (int context);
 // ZeroMQ API http://api.zeromq.org/2-1:zmq-socket
 // =>   void *zmq_socket (void *context, int type);
 // in MQL4
-// =>   void zmq_socket (int context, int type);
-void zmq_socket (int context, int type);
+// =>   int zmq_socket (int context, int type);
+int zmq_socket (int context, int type);
 
 ///////// zmq_close - close ØMQ socket /////////   
 // ZeroMQ API http://api.zeromq.org/2-1:zmq-close
