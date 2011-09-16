@@ -24,10 +24,12 @@
 #define ZMQ_VERSION_MINOR 1
 #define ZMQ_VERSION_PATCH 9
 
-#define ZMQ_MAKE_VERSION(major, minor, patch) \
-   ((major) * 10000 + (minor) * 100 + (patch))
-#define ZMQ_VERSION \
-   ZMQ_MAKE_VERSION(ZMQ_VERSION_MAJOR, ZMQ_VERSION_MINOR, ZMQ_VERSION_PATCH)
+//// Original is commented out but remains so that we can see how we came to the number we specifiy for ZMQ_VERSION. /////
+//#define ZMQ_MAKE_VERSION (major, minor, patch) \
+//   ((major) * 10000 + (minor) * 100 + (patch))
+//#define ZMQ_VERSION \
+//   ZMQ_MAKE_VERSION(ZMQ_VERSION_MAJOR, ZMQ_VERSION_MINOR, ZMQ_VERSION_PATCH)
+#define ZMQ_VERSION 20109
    
 /*  Run-time API version detection                                            */
 
