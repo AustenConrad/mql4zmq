@@ -2,20 +2,51 @@
 
 The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 documentation homepage.") bindings for the [ZeroMQ](http://zeromq.org/ "ZeroMQ homepage.") networking library. 
 
-This software is in an alpha state. I would <i>not</i> recommend it's use in production environments yet.
+### To build:
 
-The mql4zmq.mqh header file is a reworking of ZeroMQ's default zmq.h header file for use with the MQL4 language.
+0. Download and install [Microsoft Visual C++ Express 2010](http://go.microsoft.com/?linkid=9709949 "Microsoft's Visual C++ 2010 Express Download Link.") if you don't already have it. 
 
-The included precompiled `libzmq.dll` is for a 64-bit architecture. If you need to compile the ZeroMQ library for 32-bit you can download ZeroMQ [here](http://www.zeromq.org/intro:get-the-software "ZeroMQ download page.").
+1. Download or git clone the [ZeroMQ v2.1 source](https://github.com/zeromq/zeromq2-1/ "ZeroMQ v2.1 github.")
 
-### To install:
+2. Download or git clone the [MQL4ZMQ source](https://github.com/AustenConrad/mql4zmq/ "mql4zmq github.")
 
-1. Move `mql4zmq.mqh` to: `c:\windows\Program Files (x86)\Metatrader\experts\include\mql4zmq.mqh`
+3. Copy the downloaded 'mql4zmq' source folder to: downloaded_zeromq_source_folder\builds\msvc\
 
-2. Move `libzmq.dll`  to: `c:\windows\Program Files (x86)\Metatrader\experts\libraries\libzmq.dll`
+4. Open the ZMQ build solution at: downloaded_zeromq_source_folder\builds\msvc\msvc
+4.1 You may need to right click on it and select: "open with" => "Microsfot Visual C++ 2010 Express"
+4.2 It may need to be converted. In which case, select 'next' => 'no' then 'next' => 'finish'
 
-3. Move `mql4zmq.mq4` to: `c:\windows\Program Files (x86)\Metatrader\experts\mql4zmq.mq4`
+5. Now that we have the solution open we need to add the mqlzmq project to the solution. To do this:
+5.1 Right-click on "Solution 'msvc'" then select "add" => "existing project"
+5.2 A file browser opens up. Go into the 'msvc' folder then the 'mql4zmq' folder and select the 'mql4zmq' project file.
+5.2.1 You should now see the mql4zmq listed as project within the solution.
+5.3 Right-click on the 'mql4zmq' project and select 'Project Dependencies'. Make sure the drop-down 'Projects' menu is set to 'mql4zmq' and then select 'libzmq' in the 'Depends on' list. Select "OK" to complete.
+5.4 You are now ready to build the solution which will produce the ZeroMQ library (libzmq.dll) and the MQL4ZMQ bindings library (mql4zmq.dll). To do this right-click on the solution and select 'Build Solution'.
+5.5 Once all 8 projects within the solution have completed building, we need to copy the files the MetaTrader needs to the location it needs them as follows:
+5.5.1	downloaded_zeromq_source_folder\builds\msvc\Debug\mql4zmq.dll => c:\Program Files (x86)\[metatrader directory]\experts\libraries\mql4zmq.dll
+5.5.2	downloaded_zeromq_source_folder\lib\libzmq.dll => c:\Windows\SysWOW64\libzmq.dll
+5.5.3	downloaded_zeromq_source_folder\builds\msvc\mql4zmq\mql4zmq.mqh => c:\Program Files (x86)\[metatrader directory]\experts\include\mql4zmq.mqh
+5.5.3	downloaded_zeromq_source_folder\builds\msvc\mql4zmq\examples\mql4zmq.mq4 => c:\Program Files (x86)\[metatrader directory]\experts\mql4zmq.mq4
+5.6 You are now ready to open up metatrader, attach the example mql4zmq expert to the chart, and be off and running.
+5.6.1	NOTE: when attaching to the chart make sure to select "Allow DLL Imports" and de-select "Confirm DLL Function Calls".
+
+
+### To use the pre-compiled libraries:
+
+0. Download and install the [Microsoft Visual C++ 2010 Redistributable Package](http://www.microsoft.com/download/en/details.aspx?id=5555 "Microsoft Visual C++ 2010 Redistributable Package Download.") if you don't already have it.
+
+1. Download or git clone the [MQL4ZMQ source](https://github.com/AustenConrad/mql4zmq/ "mql4zmq github.")
+
+2. Copy the following files in the pre-compiled folder to the following locations MetaTrader:
+2.1	mql4zmq.dll => c:\Program Files (x86)\[metatrader directory]\experts\libraries\mql4zmq.dll
+2.2	libzmq.dll => c:\Windows\SysWOW64\libzmq.dll
+2.3	mql4zmq.mqh => c:\Program Files (x86)\[metatrader directory]\experts\include\mql4zmq.mqh
+2.4	mql4zmq.mq4 => c:\Program Files (x86)\[metatrader directory]\experts\mql4zmq.mq4
+
+3 You are now ready to open up metatrader, attach the example mql4zmq expert to the chart, and be off and running.
+3.1 NOTE: when attaching to the chart make sure to select "Allow DLL Imports" and de-select "Confirm DLL Function Calls".
+
 
 ### Example Usage:
 
-`code will be provided when there is working code to provide.`
+0. See Publish/Subscribe example in examples folder. In general the use is exactly as [documented](http://api.zeromq.org/2-1:_start "ZeroMQ API Documentation.") by ZeroMQ and described in the "C" examples in the [ZGuide](http://zguide.zeromq.org/page:all "ZeroMQ ZGuide.")
