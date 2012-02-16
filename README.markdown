@@ -17,9 +17,9 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
     - It may need to be converted. In which case, select 'next' => 'no' then 'next' => 'finish'
 
 5. Now that we have the solution open we need to add the mqlzmq project to the solution. To do this:
-5.1 Right-click on "Solution 'msvc'" then select "add" => "existing project"
-5.2 A file browser opens up. Go into the 'msvc' folder then the 'mql4zmq' folder and select the 'mql4zmq' project file.
-5.2.1 You should now see the mql4zmq listed as project within the solution.
+    1. Right-click on "Solution 'msvc'" then select "add" => "existing project"
+    2. A file browser opens up. Go into the 'msvc' folder then the 'mql4zmq' folder and select the 'mql4zmq' project file.
+        - You should now see the mql4zmq listed as project within the solution.
 5.3 Right-click on the 'mql4zmq' project and select 'Project Dependencies'. Make sure the drop-down 'Projects' menu is set to 'mql4zmq' and then select 'libzmq' in the 'Depends on' list. Select "OK" to complete.
 5.4 You are now ready to build the solution which will produce the ZeroMQ library (libzmq.dll) and the MQL4ZMQ bindings library (mql4zmq.dll). To do this right-click on the solution and select 'Build Solution'.
 5.5 Once all 8 projects within the solution have completed building, we need to copy the files the MetaTrader needs to the location it needs them as follows:
