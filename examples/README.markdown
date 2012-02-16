@@ -20,3 +20,12 @@ They also demonstrate the key point of the mql4zmq project which is that the use
 MetaTrader opens up the door to writing your trading code in any of the 30+ languages for which there is a [ZeroMQ binding.](http://www.zeromq.org/bindings:_start "ZeroMQ language bindings.")
 
 With very little work you can expand the mql4zmq EA to be a full fledged bridge.
+
+####Example Usage:
+
+	ruby mql4zmq_pub.rb 10.18.16.5:2028 cmd
+	Hello World
+	=> cmd Hello World
+
+	ruby mql4zmq_sub.rb 10.18.16.5:2027 tick my_custom1 my_custom2
+	=> subscribes to the 'tick', 'my_custom1', and 'my_custom2' channels.
