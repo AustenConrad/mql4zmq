@@ -25,7 +25,8 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
     5. Once all 8 projects within the solution have completed building, we need to copy the files the MetaTrader needs to the location it needs them as follows:
         - downloaded_zeromq_source_folder\builds\msvc\Debug\mql4zmq.dll 
 		=> c:\Program Files (x86)\[metatrader directory]\experts\libraries\mql4zmq.dll
-        - downloaded_zeromq_source_folder\lib\libzmq.dll => c:\Windows\SysWOW64\libzmq.dll
+        - downloaded_zeromq_source_folder\lib\libzmq.dll 
+		=> c:\Program Files (x86)\[metatrader directory]\experts\libraries\libzmq.dll
         - downloaded_zeromq_source_folder\builds\msvc\mql4zmq\mql4zmq.mqh 
 		=> c:\Program Files (x86)\[metatrader directory]\experts\include\mql4zmq.mqh
         - downloaded_zeromq_source_folder\builds\msvc\mql4zmq\examples\mql4zmq.mq4 
