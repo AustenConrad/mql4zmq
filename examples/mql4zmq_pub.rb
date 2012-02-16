@@ -1,12 +1,12 @@
 # run via: ruby mql4zmq_pub.rb 10.18.16.5:2028 cmd
-#       Buy
-#       => sends message 'cmd Buy' to the MetaTrader EA at 10.18.16.5:2028
+#       Hello World
+#       => sends message 'cmd Hello World' to the MetaTrader EA at 10.18.16.5:2028
 require 'zmq'
 
 # Check for help being requested.
 if ARGV[0] == "-h" || ARGV[0] == "--help"
         puts "Usage: ruby mql4zmq_pub.rb [MetaTrader IP address]:[MQL4ZMQ EA Port Number default 2028] [channel to send messages on]"
-        puts "example: \n ruby mql4zmq_pub.rb 10.18.16.16:2028 cmd\n Buy\n => sends message 'cmd Buy' to the MetaTrader EA at 10.18.16.16"
+        puts "example: \n ruby mql4zmq_pub.rb 10.18.16.16:2028 cmd\n Hello World\n => sends message 'cmd Hello World' to the MetaTrader EA at 10.18.16.16"
 else
         # Initialize ZeroMQ Context.
         context = ZMQ::Context.new
