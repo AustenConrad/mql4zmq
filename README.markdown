@@ -13,8 +13,8 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
 3. Copy the downloaded 'mql4zmq' source folder to: downloaded_zeromq_source_folder\builds\msvc\
 
 4. Open the ZMQ build solution at: downloaded_zeromq_source_folder\builds\msvc\msvc
-* You may need to right click on it and select: "open with" => "Microsfot Visual C++ 2010 Express"
-* It may need to be converted. In which case, select 'next' => 'no' then 'next' => 'finish'
+    - You may need to right click on it and select: "open with" => "Microsfot Visual C++ 2010 Express"
+    - It may need to be converted. In which case, select 'next' => 'no' then 'next' => 'finish'
 
 5. Now that we have the solution open we need to add the mqlzmq project to the solution. To do this:
 5.1 Right-click on "Solution 'msvc'" then select "add" => "existing project"
