@@ -26,34 +26,6 @@
 
 	libzmq.dll NOTE: After building the solution, copy ../../../lib/libzmq.dll to c:\Windows\SysWOW64\libzmq.dll so that our bindings and other applications can access ZeroMQ.
 
-	NOTE: if error #126 happens on loading of mql4zmq.dll then we need to make certain that the DLL is statically linking it's dependencies. Below are directions on how
-			to do this. Originally taken from: http://www.rhyous.com/2010/09/16/avoiding-the-msvcr100-dll-or-msvcr100d-dll/
-
-	Statically Linking the DLLs
-	
-	Make sure you resolve it for both Release and Debug.  The steps are slightly different.
-	
-	Release
-
-    In Visual Studio, I went to the project Properties.
-    I changed my Configuration to Release.
-    I went under Configuration Properties | C/C++ | Code Generation
-    Look at the Runtime Library setting.  It is set to this: Multi-threaded DLL (/MD)
-    Change it to this: Multi-threaded (/MT)
-    Rebuild.
-
-	Debug
-
-	Almost exactly the same as release.
-
-    In Visual Studio, I went to the project Properties.
-    I changed my Configuration to Debug.
-    I went under Configuration Properties | C/C++ | Code Generation
-    Look at the Runtime Library setting.  It is set to this: Multi-threaded Debug DLL (/MDd)
-    Change it to this: Multi-threaded Debug (/MTd)
-    Rebuild the debug
-
-	===================================
 */
 
 // Include the original libzmq header file.
