@@ -40,7 +40,7 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
 
 1. Download or git clone the [MQL4ZMQ source](https://github.com/AustenConrad/mql4zmq/ "mql4zmq github.")
 
-2. Copy the following files in the pre-compiled folder to the following locations MetaTrader:
+2. Copy the following files to the following locations for MetaTrader:
     - downloaded_mql4zmq_source_folder\pre-compiled\mql4zmq.dll 
 		=> c:\Program Files (x86)\[metatrader directory]\experts\libraries\mql4zmq.dll
     - downloaded_mql4zmq_source_folder\pre-compiled\libzmq.dll 
