@@ -1,9 +1,9 @@
-# run via: ruby zmq_ploutos_sub.rb 10.18.16.5:2027 tick [channel 2] [channel 3]...
+# run via: ruby mql4zmq_sub.rb 10.18.16.5:2027 tick [channel 2] [channel 3]...
 require 'zmq'
 
 # Check for help requested
 if ARGV[0] == "-h" || ARGV[0] == "--help"
-        puts "Usage: ruby zmq_ploutos_sub.rb [MetaTrader IP Address]:[MQL4ZMQ EA Port Number default 2027] [channel 1] [channel 2] [channel 3]..."
+        puts "Usage: ruby mql4zmq_sub.rb [MetaTrader IP Address]:[MQL4ZMQ EA Port Number default 2027] [channel 1] [channel 2] [channel 3]..."
         puts "Example:\nruby zma_ploutos_sub.rb 10.18.16.16:2027 tick trades\n=> subscribes to the 'tick' and 'trades' channels coming from the MetaTrader EA at 10.18.16.16."
 else
         # Initialize the ZeroMQ context.
