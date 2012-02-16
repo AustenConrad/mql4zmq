@@ -4,6 +4,12 @@
 
 This is an example EA that shows how to use mql4zmq to publish and subscribe messages each tick.
 
+## curl dump:
+On a *nix box:
+    * curl -N [metatrader ip address]:[mql4zmq publish port, default is 2027]
+will dump out all the messages published by the mql4zmq EA. 
+    * Example => curl -N 10.18.16.5:2027
+
 ## ruby examples:
 The mql4zmq_pub.rb and mql4zmq_sub.rb files are provided to use to test the mql4zmq EA. 
 
