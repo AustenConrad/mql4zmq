@@ -1,12 +1,10 @@
 # mql4zmq examples
 
-The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 documentation homepage.") bindings for the [ZeroMQ](http://zeromq.org/ "ZeroMQ homepage.") networking library. 
-
-### mql4zmq.mq4:
+## mql4zmq.mq4:
 
 This is an example EA that shows how to use mql4zmq to publish and subscribe messages each tick.
 
-### ruby examples:
+## ruby examples:
 The mql4zmq_pub.rb and mql4zmq_sub.rb files are provided to use to test the mql4zmq EA. 
 
 They also demonstrate the key point of the mql4zmq project which is that the use of ZeroMQ to communicate with
