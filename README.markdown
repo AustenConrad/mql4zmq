@@ -25,6 +25,7 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
     5. You are now ready to build the solution which will produce the ZeroMQ library (libzmq.dll) and the MQL4ZMQ bindings library (mql4zmq.dll). To do this right-click on the solution and select 'Build Solution'.
     6. Once all 8 projects within the solution have completed building, we need to copy the files the MetaTrader needs to the location it needs them as follows:
 
+	<code>
 	downloaded_zeromq_source_folder\builds\msvc\Release\mql4zmq.dll 
 	=> c:\Program Files (x86)\[metatrader directory]\experts\libraries\mql4zmq.dll
 
@@ -36,6 +37,7 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
 
 	downloaded_zeromq_source_folder\builds\msvc\mql4zmq\examples\mql4zmq.mq4 
 	=> c:\Program Files (x86)\[metatrader directory]\experts\mql4zmq.mq4
+	</code>
 
 6. You are now ready to open up metatrader, attach the example mql4zmq expert to the chart, and be off and running.
     * NOTE: when attaching to the chart make sure to select "Allow DLL Imports" and de-select "Confirm DLL Function Calls".
