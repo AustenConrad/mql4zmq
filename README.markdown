@@ -23,10 +23,13 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
     3. Right-click on the 'mql4zmq' project and select 'Project Dependencies'. Make sure the drop-down 'Projects' menu is set to 'mql4zmq' and then select 'libzmq' in the 'Depends on' list. Select "OK" to complete.
     4. You are now ready to build the solution which will produce the ZeroMQ library (libzmq.dll) and the MQL4ZMQ bindings library (mql4zmq.dll). To do this right-click on the solution and select 'Build Solution'.
     5. Once all 8 projects within the solution have completed building, we need to copy the files the MetaTrader needs to the location it needs them as follows:
-        - downloaded_zeromq_source_folder\builds\msvc\Debug\mql4zmq.dll => c:\Program Files (x86)\[metatrader directory]\experts\libraries\mql4zmq.dll
+        - downloaded_zeromq_source_folder\builds\msvc\Debug\mql4zmq.dll 
+		=> c:\Program Files (x86)\[metatrader directory]\experts\libraries\mql4zmq.dll
         - downloaded_zeromq_source_folder\lib\libzmq.dll => c:\Windows\SysWOW64\libzmq.dll
-        - downloaded_zeromq_source_folder\builds\msvc\mql4zmq\mql4zmq.mqh => c:\Program Files (x86)\[metatrader directory]\experts\include\mql4zmq.mqh
-        - downloaded_zeromq_source_folder\builds\msvc\mql4zmq\examples\mql4zmq.mq4 => c:\Program Files (x86)\[metatrader directory]\experts\mql4zmq.mq4
+        - downloaded_zeromq_source_folder\builds\msvc\mql4zmq\mql4zmq.mqh 
+		=> c:\Program Files (x86)\[metatrader directory]\experts\include\mql4zmq.mqh
+        - downloaded_zeromq_source_folder\builds\msvc\mql4zmq\examples\mql4zmq.mq4 
+		=> c:\Program Files (x86)\[metatrader directory]\experts\mql4zmq.mq4
     6. You are now ready to open up metatrader, attach the example mql4zmq expert to the chart, and be off and running.
         * NOTE: when attaching to the chart make sure to select "Allow DLL Imports" and de-select "Confirm DLL Function Calls".
 
@@ -38,15 +41,19 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
 1. Download or git clone the [MQL4ZMQ source](https://github.com/AustenConrad/mql4zmq/ "mql4zmq github.")
 
 2. Copy the following files in the pre-compiled folder to the following locations MetaTrader:
-    - downloaded_mql4zmq_source_folder\pre-compiled\mql4zmq.dll => c:\Program Files (x86)\[metatrader directory]\experts\libraries\mql4zmq.dll
-    - downloaded_mql4zmq_source_folder\pre-compiled\libzmq.dll => c:\Windows\SysWOW64\libzmq.dll
-    - downloaded_mql4zmq_source_folder\mql4zmq.mqh => c:\Program Files (x86)\[metatrader directory]\experts\include\mql4zmq.mqh
-    - downloaded_mql4zmq_source_folder\examples\mql4zmq.mq4 => c:\Program Files (x86)\[metatrader directory]\experts\mql4zmq.mq4
+    - downloaded_mql4zmq_source_folder\pre-compiled\mql4zmq.dll 
+		=> c:\Program Files (x86)\[metatrader directory]\experts\libraries\mql4zmq.dll
+    - downloaded_mql4zmq_source_folder\pre-compiled\libzmq.dll 
+		=> c:\Windows\SysWOW64\libzmq.dll
+    - downloaded_mql4zmq_source_folder\mql4zmq.mqh 
+		=> c:\Program Files (x86)\[metatrader directory]\experts\include\mql4zmq.mqh
+    - downloaded_mql4zmq_source_folder\examples\mql4zmq.mq4 
+		=> c:\Program Files (x86)\[metatrader directory]\experts\mql4zmq.mq4
 
-3 You are now ready to open up metatrader, attach the example mql4zmq expert to the chart, and be off and running.
+3. You are now ready to open up metatrader, attach the example mql4zmq expert to the chart, and be off and running.
     * NOTE: when attaching to the chart make sure to select "Allow DLL Imports" and de-select "Confirm DLL Function Calls".
 
 
 ### Example Usage:
 
-0. See Publish/Subscribe example in examples folder. In general the use is exactly as [documented](http://api.zeromq.org/2-1:_start "ZeroMQ API Documentation.") by ZeroMQ and described in the "C" examples in the [ZGuide](http://zguide.zeromq.org/page:all "ZeroMQ ZGuide.")
+See Publish/Subscribe example in [examples](https://github.com/AustenConrad/mql4zmq/tree/master/examples "MQL4ZMQ Examples folder at Master.") folder. In general the use is exactly as [documented](http://api.zeromq.org/2-1:_start "ZeroMQ API Documentation.") by ZeroMQ and described in the "C" examples in the [ZGuide](http://zguide.zeromq.org/page:all "ZeroMQ ZGuide.")
