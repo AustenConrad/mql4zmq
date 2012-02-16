@@ -25,7 +25,7 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
     5. You are now ready to build the solution which will produce the ZeroMQ library (libzmq.dll) and the MQL4ZMQ bindings library (mql4zmq.dll). To do this right-click on the solution and select 'Build Solution'.
     6. Once all 8 projects within the solution have completed building, we need to copy the files the MetaTrader needs to the location it needs them as follows:
 
-	<code>
+	<code><pre><code>
 	downloaded_zeromq_source_folder\builds\msvc\Release\mql4zmq.dll 
 	=> c:\Program Files (x86)\[metatrader directory]\experts\libraries\mql4zmq.dll
 
