@@ -21,9 +21,10 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
     2. A file browser opens up. Go into the 'msvc' folder then the 'mql4zmq' folder and select the 'mql4zmq' project file.
         - You should now see the mql4zmq listed as project within the solution.
     3. Right-click on the 'mql4zmq' project and select 'Project Dependencies'. Make sure the drop-down 'Projects' menu is set to 'mql4zmq' and then select 'libzmq' in the 'Depends on' list. Select "OK" to complete.
-    4. You are now ready to build the solution which will produce the ZeroMQ library (libzmq.dll) and the MQL4ZMQ bindings library (mql4zmq.dll). To do this right-click on the solution and select 'Build Solution'.
-    5. Once all 8 projects within the solution have completed building, we need to copy the files the MetaTrader needs to the location it needs them as follows:
-        - downloaded_zeromq_source_folder\builds\msvc\Debug\mql4zmq.dll 
+    4. Make sure the build is set to 'Release' and not 'Debug'. See drop-down in middle of top Visual C++ application menu. 
+    5. You are now ready to build the solution which will produce the ZeroMQ library (libzmq.dll) and the MQL4ZMQ bindings library (mql4zmq.dll). To do this right-click on the solution and select 'Build Solution'.
+    6. Once all 8 projects within the solution have completed building, we need to copy the files the MetaTrader needs to the location it needs them as follows:
+        - downloaded_zeromq_source_folder\builds\msvc\Release\mql4zmq.dll 
 		=> c:\Program Files (x86)\[metatrader directory]\experts\libraries\mql4zmq.dll
         - downloaded_zeromq_source_folder\lib\libzmq.dll 
 		=> c:\Windows\SysWOW64\libzmq.dll
@@ -31,8 +32,8 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
 		=> c:\Program Files (x86)\[metatrader directory]\experts\include\mql4zmq.mqh
         - downloaded_zeromq_source_folder\builds\msvc\mql4zmq\examples\mql4zmq.mq4 
 		=> c:\Program Files (x86)\[metatrader directory]\experts\mql4zmq.mq4
-    6. You are now ready to open up metatrader, attach the example mql4zmq expert to the chart, and be off and running.
-        * NOTE: when attaching to the chart make sure to select "Allow DLL Imports" and de-select "Confirm DLL Function Calls".
+6. You are now ready to open up metatrader, attach the example mql4zmq expert to the chart, and be off and running.
+    * NOTE: when attaching to the chart make sure to select "Allow DLL Imports" and de-select "Confirm DLL Function Calls".
 
 
 ### To use the pre-compiled libraries:
