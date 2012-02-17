@@ -2,6 +2,12 @@
 
 The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 documentation homepage.") bindings for the [ZeroMQ](http://zeromq.org/ "ZeroMQ homepage.") networking library. 
 
+IMPORTANT NOTE: You are free to use MQL4ZMQ in your trading projects as long as you agree that no warranty is provided whatsoever.
+
+### Example Usage:
+
+See Publish/Subscribe example in [examples](https://github.com/AustenConrad/mql4zmq/tree/master/examples "MQL4ZMQ Examples folder at Master.") folder. In general the use is exactly as [documented](http://api.zeromq.org/2-1:_start "ZeroMQ API Documentation.") by ZeroMQ and described in the "C" examples in the [ZGuide](http://zguide.zeromq.org/page:all "ZeroMQ ZGuide.")
+
 ### To build:
 
 0. Download and install [Microsoft Visual C++ Express 2010](http://go.microsoft.com/?linkid=9709949 "Microsoft's Visual C++ 2010 Express Download Link.") if you don't already have it. 
@@ -69,8 +75,3 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
 
 3. You are now ready to open up metatrader, attach the example mql4zmq expert to the chart, and be off and running.
     * NOTE: when attaching to the chart make sure to select "Allow DLL Imports" and de-select "Confirm DLL Function Calls".
-
-
-### Example Usage:
-
-See Publish/Subscribe example in [examples](https://github.com/AustenConrad/mql4zmq/tree/master/examples "MQL4ZMQ Examples folder at Master.") folder. In general the use is exactly as [documented](http://api.zeromq.org/2-1:_start "ZeroMQ API Documentation.") by ZeroMQ and described in the "C" examples in the [ZGuide](http://zguide.zeromq.org/page:all "ZeroMQ ZGuide.")
