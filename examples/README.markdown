@@ -29,3 +29,8 @@ With very little work you can expand the mql4zmq EA to be a full fledged bridge.
 
 	ruby mql4zmq_sub.rb 10.18.16.5:2027 tick my_custom1 my_custom2
 	=> subscribes to the 'tick', 'my_custom1', and 'my_custom2' channels.
+
+## mql4zmq_bridge.mq4 (STILL IN DEVELOPMENT)
+This is an example bridge to show easy it is to develop one using MQL4ZMQ. I am only adding parts
+as my currents project needs them. Eventually, this will be a complete example. Until then, it will
+be largely undocumented; for reference only.
