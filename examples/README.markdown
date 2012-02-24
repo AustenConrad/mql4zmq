@@ -32,5 +32,5 @@ With very little work you can expand the mql4zmq EA to be a full fledged bridge.
 
 ## mql4zmq_bridge.mq4 (STILL IN DEVELOPMENT)
 This is an example bridge to show easy it is to develop one using MQL4ZMQ. I am only adding parts
-as my currents project needs them. Eventually, this will be a complete example. Until then, it will
+as my current projects need them. Eventually, this will be a complete example. Until then, it will
 be largely undocumented; for reference only.
