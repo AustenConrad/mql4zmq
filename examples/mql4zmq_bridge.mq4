@@ -45,7 +45,7 @@ int init()
    //
    // This points out that with ZeroMQ it does not matter which end binds and which connects. It is best practice that the more stable
    // end is the bind end.
-   if (zmq_bind(speaker,"tcp://*:2027") == -1) 
+ /*  if (zmq_bind(speaker,"tcp://*:2027") == -1) 
    {
       Print("Error binding the speaker!");
       return(-1);  
@@ -56,14 +56,20 @@ int init()
       Print("Error binding the listener!");
       return(-1);
    }
-   
-  /*
-   if (zmq_connect(client,"tcp://10.18.16.16:5555") == -1)
+ */  
+  
+   if (zmq_connect(speaker,"tcp://10.18.16.10:1985") == -1)
    {
-      Print("Error connecting to the client!");
+      Print("Error connecting the speaker to the central queue!");
       return(-1);
    }
-  */
+
+   if (zmq_connect(listener,"tcp://10.18.16.10:1986") == -1)
+   {
+      Print("Error connecting the listener to the central queue!");
+      return(-1);
+   }
+  
 
    
 //----
