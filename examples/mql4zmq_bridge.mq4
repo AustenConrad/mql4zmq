@@ -58,13 +58,13 @@ int init()
    }
  */  
   
-   if (zmq_connect(speaker,"tcp://10.18.16.10:1985") == -1)
+   if (zmq_connect(speaker,"tcp://10.18.16.16:1985") == -1)
    {
       Print("Error connecting the speaker to the central queue!");
       return(-1);
    }
 
-   if (zmq_connect(listener,"tcp://10.18.16.10:1986") == -1)
+   if (zmq_connect(listener,"tcp://10.18.16.16:1986") == -1)
    {
       Print("Error connecting the listener to the central queue!");
       return(-1);
