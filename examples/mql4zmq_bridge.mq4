@@ -160,7 +160,7 @@ int start()
       if (StringFind(message2, "currentPair", 0) != -1)
       {
          // Pull out request uid. Message is formatted: "cmd:[uid] currentPair"
-         int uid_start = StringFind(message2, "cmd:", 0) + 4;
+         int uid_start = StringFind(message2, "cmd|", 0) + 4;
          int uid_end = StringFind(message2, " ", 4);
          string uid = StringSubstr(message2, uid_start, uid_end);
          
