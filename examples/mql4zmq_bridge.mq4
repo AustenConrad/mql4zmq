@@ -82,6 +82,12 @@ int deinit()
   {
 //----
 
+   // Delete all objects from the chart.
+   for(int i=ObjectsTotal()-1; i>-1; i--) {
+      ObjectDelete(ObjectName(i));
+   }
+   Comment("");
+   
    // Protect against memory leaks on shutdown.
    zmq_close(speaker);
    zmq_close(listener);
@@ -95,6 +101,7 @@ int deinit()
 //+------------------------------------------------------------------+
 int start()
   {
+
 //----
    
    
@@ -151,6 +158,7 @@ int start()
    //       string message2 = s_recv(listener);
    //
    string message2 = s_recv(listener, ZMQ_NOBLOCK);
+   string uid = "";
    
    if (message2 != "") // Will return NULL if no message was received.
    {
@@ -160,19 +168,84 @@ int start()
       if (StringFind(message2, "currentPair", 0) != -1)
       {
          // Pull out request uid. Message is formatted: "cmd|[uid] currentPair"
-         int uid_start = StringFind(message2, "cmd|", 0) + 4;
-         int uid_end = StringFind(message2, " ", 4);
-         string uid = StringSubstr(message2, uid_start, uid_end);
+         uid = message_get_uid(message2);
          
+         // ack uid.
          Print("uid: " + uid);
          
          // Send response.
-         string response_string = "response:" + uid + " " + Symbol();
-         if(s_send(speaker, response_string) == -1)
-            Print("Error sending message: " + response_string);
-         else
-            Print("Published message: " + response_string);   
+         if(send_response(uid, Symbol()) == false)
+            Print("ERROR occurred sending response!");
       }
+      
+      // If a new element to be drawen is requested.
+      if (StringFind(message2, "Draw", 0) != -1)
+      {
+         // Pull out request uid. Message is formatted: "cmd|[uid] Draw [obj_type] [open time] [open price] [close time] [close price] [prediction]"
+         uid = message_get_uid(message2);
+         
+         // Initialize array to hold the extracted settings. 
+         string object_settings[7] = {"object_type", "window", "open_time", "open_price" ,"close_time", "close_price", "prediction"};
+         
+         // Pull out the drawing settings.
+         string keyword = "Draw";
+         int start_position = StringFind(message2, keyword, 0) + StringLen(keyword) + 1;
+         int end_position = StringFind(message2, " ", start_position + 1);
+
+         for(int i = 0; i < ArraySize(object_settings); i++)
+         {
+            object_settings[i] = StringSubstr(message2, start_position, end_position - start_position);
+            
+            // Protect against looping back around to the beginning of the string by exiting if the new
+            // start position would be a lower index then the current one.
+            if(StringFind(message2, " ", end_position) < start_position)
+               break;
+            else 
+            { 
+               start_position = StringFind(message2, " ", end_position);
+               end_position = StringFind(message2, " ", start_position + 1);
+            }
+         }
+         
+         // ack uid.
+         Print("uid: " + uid);
+     
+         // Generate UID
+         double bar_uid = MathRand()%10001/10000.0;
+            
+         // Draw the rectangle object.
+         Print("Drawing: ", object_settings[0], " ", object_settings[1], " ", object_settings[2], " ", object_settings[3], " ", object_settings[4], " ", object_settings[5], " ", object_settings[6]);
+         if(!ObjectCreate("bar:" + bar_uid, draw_object_string_to_int(object_settings[0]), StrToInteger(object_settings[1]), StrToInteger(object_settings[2]), StrToDouble(object_settings[3]), StrToInteger(object_settings[4]), StrToDouble(object_settings[5])))
+         {
+           Print("error: cannot create object! code #",GetLastError());
+           // Send response.
+           send_response(uid, false);
+         }
+         else
+         {
+           // Color the bar based on the predicted direction. If no prediction was sent than the 
+           // 'prediction' keyword will still occupy the array element and we need to set to Gray.
+           if(StringFind(object_settings[6], "prediction", 0) != -1)
+           {
+              ObjectSet("bar:" + bar_uid, OBJPROP_COLOR, Gray);
+           }
+           else if(StrToInteger(object_settings[6]) == 1)
+           {
+              ObjectSet("bar:" + bar_uid, OBJPROP_COLOR, CadetBlue);
+           }
+           else if(StrToInteger(object_settings[6]) == 0)
+           {
+              ObjectSet("bar:" + bar_uid, OBJPROP_COLOR, IndianRed);
+           }
+           else
+              ObjectSet("bar:" + bar_uid, OBJPROP_COLOR, Gray);
+                 
+           // Send response.
+           send_response(uid, true);
+         }         
+      }
+      
+      return(0);
       
    }
    
@@ -228,4 +301,124 @@ int start()
 //----
    return(0);
   }
+  
+//+------------------------------------------------------------------+
+//| Pulls out the UID for the message. Messages are fomatted:
+//|      => "cmd|[uid] [some command]
+//+------------------------------------------------------------------+
+string message_get_uid(string message)
+{
+   // Pull out request uid. Message is formatted: "cmd|[uid] [some command]"
+   int uid_start = StringFind(message, "cmd|", 0) + 4;
+   int uid_end = StringFind(message, " ", 0) - uid_start;
+   string uid = StringSubstr(message, uid_start, uid_end);
+   
+   // Return the UID
+   return(uid);
+} 
+
+//+------------------------------------------------------------------+
+//| Sends a response to a command. Messages are fomatted:
+//|      => "response|[uid] [some command]
+//+------------------------------------------------------------------+
+bool send_response(string uid, string response)
+{
+   // Compose response string.
+   string response_string = "response|" + uid + " " + response;
+   
+   // Send the message.
+   if(s_send(speaker, response_string) == -1)
+   {
+      Print("Error sending message: " + response_string);
+      return(false);
+   }   
+   else
+   {
+      Print("Published message: " + response_string); 
+      return(true);
+   }
+} 
+
+//+------------------------------------------------------------------+
+//| Returns the MetaTrader integer value for the string versions of the object types.
+//+------------------------------------------------------------------+
+int draw_object_string_to_int(string name)
+{      
+
+   // Initialize result holder with the error code incase a match is not found.
+   int drawing_type_result = -1;
+   
+   // Initialize array of all of the drawing types for MQL4.
+   // NOTE: They are in numerical order. I.E. OBJ_VLINE has
+   //       a value of '0' and therefore is array element '0'.
+   string drawing_types[24] = {
+      "OBJ_VLINE", 
+      "OBJ_HLINE", 
+      "OBJ_TREND", 
+      "OBJ_TRENDBYANGLE", 
+      "OBJ_REGRESSION", 
+      "OBJ_CHANNEL", 
+      "OBJ_STDDEVCHANNEL", 
+      "OBJ_GANNLINE", 
+      "OBJ_GANNFAN",
+      "OBJ_GANNGRID",
+      "OBJ_FIBO",
+      "OBJ_FIBOTIMES",
+      "OBJ_FIBOFAN",
+      "OBJ_FIBOARC",
+      "OBJ_EXPANSION",
+      "OBJ_FIBOCHANNEL",
+      "OBJ_RECTANGLE",
+      "OBJ_TRIANGLE",
+      "OBJ_ELLIPSE",
+      "OBJ_PITCHFORK",
+      "OBJ_CYCLES",
+      "OBJ_TEXT",
+      "OBJ_ARROW",
+      "OBJ_LABEL"
+    };
+   
+    // Cycle throught the array to find a match to the specified 'name' value.
+    // Once a match is found, store it's location within the array. This location
+    // corresponds to the int value it should have.
+    for(int i = 0; i < ArraySize(drawing_types); i++)
+    {
+      if(name == drawing_types[i])
+      {
+         drawing_type_result = i;
+         break;
+      }
+    }
+   
+    // Return the int value the string would have had if it was a pointer of type int.
+    switch(drawing_type_result)                                  
+    {           
+      case 0 : return(0);          break;               // Vertical line. Uses time part of first coordinate.
+      case 1 : return(1);          break;               // Horizontal line. Uses price part of first coordinate.
+      case 2 : return(2);          break;               // Trend line. Uses 2 coordinates.
+      case 3 : return(3);          break;               // Trend by angle. Uses 1 coordinate. To set angle of line use ObjectSet() function.
+      case 4 : return(4);          break;               // Regression. Uses time parts of first two coordinates.
+      case 5 : return(5);          break;               // Channel. Uses 3 coordinates.
+      case 6 : return(6);          break;               // Standard deviation channel. Uses time parts of first two coordinates.
+      case 7 : return(7);          break;               // Gann line. Uses 2 coordinate, but price part of second coordinate ignored.
+      case 8 : return(8);          break;               // Gann fan. Uses 2 coordinate, but price part of second coordinate ignored.
+      case 9 : return(9);          break;               // Gann grid. Uses 2 coordinate, but price part of second coordinate ignored.
+      case 10 : return(10);        break;               // Fibonacci retracement. Uses 2 coordinates.
+      case 11 : return(11);        break;               // Fibonacci time zones. Uses 2 coordinates.
+      case 12 : return(12);        break;               // Fibonacci fan. Uses 2 coordinates.
+      case 13 : return(13);        break;               // Fibonacci arcs. Uses 2 coordinates.
+      case 14 : return(14);        break;               // Fibonacci expansions. Uses 3 coordinates.
+      case 15 : return(15);        break;               // Fibonacci channel. Uses 3 coordinates.
+      case 16 : return(16);        break;               // Rectangle. Uses 2 coordinates.
+      case 17 : return(17);        break;               // Triangle. Uses 3 coordinates.
+      case 18 : return(18);        break;               // Ellipse. Uses 2 coordinates.
+      case 19 : return(19);        break;               // Andrews pitchfork. Uses 3 coordinates.
+      case 20 : return(20);        break;               // Cycles. Uses 2 coordinates.
+      case 21 : return(21);        break;               // Text. Uses 1 coordinate.
+      case 22 : return(22);        break;               // Arrows. Uses 1 coordinate.
+      case 23 : return(23);        break;               // Labels.
+      default : return(-1);                             // ERROR. NO MATCH FOUND.
+   }
+}
+  
 //+------------------------------------------------------------------+
