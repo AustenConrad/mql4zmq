@@ -229,11 +229,11 @@ int start()
            {
               ObjectSet("bar:" + bar_uid, OBJPROP_COLOR, Gray);
            }
-           else if(StrToInteger(object_settings[6]) == 1)
+           else if(StrToDouble(object_settings[6]) > 0.5)
            {
               ObjectSet("bar:" + bar_uid, OBJPROP_COLOR, CadetBlue);
            }
-           else if(StrToInteger(object_settings[6]) == 0)
+           else if(StrToDouble(object_settings[6]) < 0.5)
            {
               ObjectSet("bar:" + bar_uid, OBJPROP_COLOR, IndianRed);
            }
