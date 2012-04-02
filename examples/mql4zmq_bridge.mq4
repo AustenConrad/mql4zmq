@@ -8,6 +8,12 @@
 #property copyright "Copyright © 2012, Austen Conrad"
 #property link      "http://www.mql4zmq.org"
 
+// Runtime options to specify.
+extern string ZMQ_transport_protocol = "tcp";
+extern string ZMQ_server_address = "10.18.16.7";
+extern string ZMQ_inbound_port = "1986";
+extern string ZMQ_outbound_port = "1985";
+
 // Include the libzmq.dll abstration wrapper.
 #include <mql4zmq.mqh>
 
@@ -15,6 +21,8 @@
 //| variable definitions                                             |
 //+------------------------------------------------------------------+
 int speaker,listener,context;
+string outbound_connection_string;
+string inbound_connection_string;
 
 //+------------------------------------------------------------------+
 //| expert initialization function                                   |
@@ -35,6 +43,8 @@ int init()
    context = zmq_init(1);
    speaker = zmq_socket(context, ZMQ_PUB);
    listener = zmq_socket(context, ZMQ_SUB);
+   outbound_connection_string = ZMQ_transport_protocol + "://" + ZMQ_server_address + ":" + ZMQ_outbound_port;
+   inbound_connection_string = ZMQ_transport_protocol + "://" + ZMQ_server_address + ":" + ZMQ_inbound_port;
   
    // Subscribe to the command channel (i.e. "cmd").  
    // NOTE: to subscribe to multiple channels call zmq_setsockopt multiple times.
@@ -58,13 +68,13 @@ int init()
    }
  */  
   
-   if (zmq_connect(speaker,"tcp://10.18.16.16:1985") == -1)
+   if (zmq_connect(speaker, outbound_connection_string) == -1)
    {
       Print("Error connecting the speaker to the central queue!");
       return(-1);
    }
 
-   if (zmq_connect(listener,"tcp://10.18.16.16:1986") == -1)
+   if (zmq_connect(listener, inbound_connection_string) == -1)
    {
       Print("Error connecting the listener to the central queue!");
       return(-1);
@@ -393,31 +403,31 @@ int draw_object_string_to_int(string name)
     // Return the int value the string would have had if it was a pointer of type int.
     switch(drawing_type_result)                                  
     {           
-      case 0 : return(0);          break;               // Vertical line. Uses time part of first coordinate.
-      case 1 : return(1);          break;               // Horizontal line. Uses price part of first coordinate.
-      case 2 : return(2);          break;               // Trend line. Uses 2 coordinates.
-      case 3 : return(3);          break;               // Trend by angle. Uses 1 coordinate. To set angle of line use ObjectSet() function.
-      case 4 : return(4);          break;               // Regression. Uses time parts of first two coordinates.
-      case 5 : return(5);          break;               // Channel. Uses 3 coordinates.
-      case 6 : return(6);          break;               // Standard deviation channel. Uses time parts of first two coordinates.
-      case 7 : return(7);          break;               // Gann line. Uses 2 coordinate, but price part of second coordinate ignored.
-      case 8 : return(8);          break;               // Gann fan. Uses 2 coordinate, but price part of second coordinate ignored.
-      case 9 : return(9);          break;               // Gann grid. Uses 2 coordinate, but price part of second coordinate ignored.
-      case 10 : return(10);        break;               // Fibonacci retracement. Uses 2 coordinates.
-      case 11 : return(11);        break;               // Fibonacci time zones. Uses 2 coordinates.
-      case 12 : return(12);        break;               // Fibonacci fan. Uses 2 coordinates.
-      case 13 : return(13);        break;               // Fibonacci arcs. Uses 2 coordinates.
-      case 14 : return(14);        break;               // Fibonacci expansions. Uses 3 coordinates.
-      case 15 : return(15);        break;               // Fibonacci channel. Uses 3 coordinates.
-      case 16 : return(16);        break;               // Rectangle. Uses 2 coordinates.
-      case 17 : return(17);        break;               // Triangle. Uses 3 coordinates.
-      case 18 : return(18);        break;               // Ellipse. Uses 2 coordinates.
-      case 19 : return(19);        break;               // Andrews pitchfork. Uses 3 coordinates.
-      case 20 : return(20);        break;               // Cycles. Uses 2 coordinates.
-      case 21 : return(21);        break;               // Text. Uses 1 coordinate.
-      case 22 : return(22);        break;               // Arrows. Uses 1 coordinate.
-      case 23 : return(23);        break;               // Labels.
-      default : return(-1);                             // ERROR. NO MATCH FOUND.
+      case 0 : return(0);          break;               //	   Vertical line. Uses time part of first coordinate.
+      case 1 : return(1);          break;               //	   Horizontal line. Uses price part of first coordinate.
+      case 2 : return(2);          break;               //		Trend line. Uses 2 coordinates.
+      case 3 : return(3);          break;               //		Trend by angle. Uses 1 coordinate. To set angle of line use ObjectSet() function.
+      case 4 : return(4);          break;               //		Regression. Uses time parts of first two coordinates.
+      case 5 : return(5);          break;               //		Channel. Uses 3 coordinates.
+      case 6 : return(6);          break;               //		Standard deviation channel. Uses time parts of first two coordinates.
+      case 7 : return(7);          break;               //		Gann line. Uses 2 coordinate, but price part of second coordinate ignored.
+      case 8 : return(8);          break;               //		Gann fan. Uses 2 coordinate, but price part of second coordinate ignored.
+      case 9 : return(9);          break;               //		Gann grid. Uses 2 coordinate, but price part of second coordinate ignored.
+      case 10 : return(10);        break;               //		Fibonacci retracement. Uses 2 coordinates.
+      case 11 : return(11);        break;               //		Fibonacci time zones. Uses 2 coordinates.
+      case 12 : return(12);        break;               //		Fibonacci fan. Uses 2 coordinates.
+      case 13 : return(13);        break;               //		Fibonacci arcs. Uses 2 coordinates.
+      case 14 : return(14);        break;               //		Fibonacci expansions. Uses 3 coordinates.
+      case 15 : return(15);        break;               //		Fibonacci channel. Uses 3 coordinates.
+      case 16 : return(16);        break;               //		Rectangle. Uses 2 coordinates.
+      case 17 : return(17);        break;               //		Triangle. Uses 3 coordinates.
+      case 18 : return(18);        break;               //		Ellipse. Uses 2 coordinates.
+      case 19 : return(19);        break;               //		Andrews pitchfork. Uses 3 coordinates.
+      case 20 : return(20);        break;               //		Cycles. Uses 2 coordinates.
+      case 21 : return(21);        break;               //		Text. Uses 1 coordinate.
+      case 22 : return(22);        break;               //		Arrows. Uses 1 coordinate.
+      case 23 : return(23);        break;               //	   Labels.
+      default : return(-1);                             //     ERROR. NO MATCH FOUND.
    }
 }
   
