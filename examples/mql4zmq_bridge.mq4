@@ -266,6 +266,10 @@ int start()
 
    // Publish current tick value.
    string current_tick = "tick " + Bid + " " + Ask + " " + Time[0];
+
+   // Publish the currently open orders.
+   string current_orders = lookup_open_orders(); 
+   
    
 ////////// Publish data via main API //////////
 /*     
@@ -303,10 +307,17 @@ int start()
    //    s_sendmore(speaker, part_1);
    //    s_sendmore(speaker, part_2);
    //    s_send(speaker, part_3);
+   //
+   // Current tick.
    if(s_send(speaker, current_tick) == -1)
       Print("Error sending message: " + current_tick);
    else
       Print("Published message: " + current_tick);
+   // Currently open orders.	
+   if(s_send(speaker, current_orders) == -1)
+      Print("Error sending message: " + current_orders);
+   else
+      Print("Published message: " + current_orders);
    
 //----
    return(0);
@@ -326,6 +337,30 @@ string message_get_uid(string message)
    // Return the UID
    return(uid);
 } 
+
+//+------------------------------------------------------------------+
+//| Returns the currently open orders.
+//|      => "orders {:symbol => 'EURUSD', :type => 'sell', ...}, {... "
+//+------------------------------------------------------------------+
+string lookup_open_orders()
+{
+   // Initialize the orders string.
+   string current_orders = "orders ";
+   
+   // Look up the total number of open orders.
+   int total_orders = OrdersTotal();
+
+   // Build a json-like string for each order and add it to eh current_orders return string.  
+   for(int position=0; position < total_orders; position++)
+   {
+     if(OrderSelect(position,SELECT_BY_POS)==false) continue;
+   
+     current_orders = current_orders + "{:symbol => \'" + OrderSymbol() + "\', :type => \'" + OrderType() + "\', :ticket_id => \'" + OrderTicket() + "\', :open_price => \'" + OrderOpenPrice() + "\', :take_profit => \'" + OrderTakeProfit() + "\', :stop_loss => \'" + OrderStopLoss() + "\', :open_time => \'" + OrderOpenTime() + ", :expire_time => \'" + OrderExpiration() + "\', :lots => \'" + OrderLots() + "\'}\n";
+   }
+      
+   // Return the completed string.
+   return(current_orders);
+}
 
 //+------------------------------------------------------------------+
 //| Sends a response to a command. Messages are fomatted:
