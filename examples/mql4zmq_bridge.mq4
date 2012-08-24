@@ -487,7 +487,7 @@ string lookup_open_orders()
    {
      if(OrderSelect(position,SELECT_BY_POS)==false) continue;
    
-     current_orders = current_orders + "{:symbol => \'" + OrderSymbol() + "\', :type => \'" + OrderType() + "\', :ticket_id => \'" + OrderTicket() + "\', :open_price => \'" + OrderOpenPrice() + "\', :take_profit => \'" + OrderTakeProfit() + "\', :stop_loss => \'" + OrderStopLoss() + "\', :open_time => \'" + OrderOpenTime() + ", :expire_time => \'" + OrderExpiration() + "\', :lots => \'" + OrderLots() + "\'}\n";
+     current_orders = current_orders + "{:pair => \'" + OrderSymbol() + "\', :type => \'" + OrderType() + "\', :ticket_id => \'" + OrderTicket() + "\', :open_price => \'" + OrderOpenPrice() + "\', :take_profit => \'" + OrderTakeProfit() + "\', :stop_loss => \'" + OrderStopLoss() + "\', :open_time => \'" + OrderOpenTime() + ", :expire_time => \'" + OrderExpiration() + "\', :lots => \'" + OrderLots() + "\'}\n";
    }
       
    // Return the completed string.
