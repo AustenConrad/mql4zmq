@@ -9,6 +9,7 @@
 #property link      "http://www.mql4zmq.org"
 
 // Runtime options to specify.
+extern string trade_direction = "short";
 extern string ZMQ_transport_protocol = "tcp";
 extern string ZMQ_server_address = "192.168.0.5";
 extern string ZMQ_inbound_port = "1986";
@@ -20,9 +21,8 @@ extern string ZMQ_outbound_port = "1985";
 //+------------------------------------------------------------------+
 //| variable definitions                                             |
 //+------------------------------------------------------------------+
-int speaker,listener,context,i,start_position,end_position, ticket;
-string outbound_connection_string,keyword, uid;
-string inbound_connection_string;
+int speaker,listener,context,i,start_position,end_position,ticket;
+string outbound_connection_string,inbound_connection_string,keyword,uid,command_string;
 
 //+------------------------------------------------------------------+
 //| expert initialization function                                   |
@@ -30,6 +30,7 @@ string inbound_connection_string;
 int init()
   {
 //----
+
    int major[1];int minor[1];int patch[1];
    zmq_version(major,minor,patch);
    Print("Using zeromq version " + major[0] + "." + minor[0] + "." + patch[0]);
@@ -45,10 +46,11 @@ int init()
    listener = zmq_socket(context, ZMQ_SUB);
    outbound_connection_string = ZMQ_transport_protocol + "://" + ZMQ_server_address + ":" + ZMQ_outbound_port;
    inbound_connection_string = ZMQ_transport_protocol + "://" + ZMQ_server_address + ":" + ZMQ_inbound_port;
+   command_string = "cmd|" + AccountName();
   
    // Subscribe to the command channel (i.e. "cmd").  
    // NOTE: to subscribe to multiple channels call zmq_setsockopt multiple times.
-   zmq_setsockopt(listener, ZMQ_SUBSCRIBE, "cmd");
+   zmq_setsockopt(listener, ZMQ_SUBSCRIBE, command_string);
  
    // We chose to have the metatrader side use bind for both listeners and speakers because metatrader instance has to always be up and there
    // will likely only ever be one metatrader instance. Whereas, we may end up scaling or sharding the recieved data amoung several data nodes.
@@ -80,6 +82,17 @@ int init()
       return(-1);
    }
    
+   // Send Notification that bridge is up.
+   // Format: bridge|testaccount UP short EURUSD
+   string bridge_up = "bridge|" + AccountName() + " UP " + trade_direction + " " + Symbol();
+   if(s_send(speaker, bridge_up) == -1)
+      Print("Error sending message: " + bridge_up);
+   else
+      Print("Published message: " + bridge_up);
+      
+   // Output command string.
+   Print("Listening for commands on channel: " + command_string);
+   
 //----
    return(0);
   }
@@ -95,6 +108,14 @@ int deinit()
       ObjectDelete(ObjectName(i));
    }
    Comment("");
+   
+   // Send Notification that bridge is down.
+   // Format: bridge|testaccount DOWN
+   string bridge_up = "bridge|" + AccountName() + " DOWN";
+   if(s_send(speaker, bridge_up) == -1)
+      Print("Error sending message: " + bridge_up);
+   else
+      Print("Published message: " + bridge_up);
    
    // Protect against memory leaks on shutdown.
    zmq_close(speaker);
@@ -174,7 +195,7 @@ int start()
       // If current currency pair is requested.
       if (StringFind(message2, "currentPair", 0) != -1)
       {
-         // Pull out request uid. Message is formatted: "cmd|[uid] currentPair"
+         // Pull out request uid. Message is formatted: "cmd|[account name]|[uid] currentPair"
          uid = message_get_uid(message2);
          
          // ack uid.
@@ -188,19 +209,19 @@ int start()
       // Trade wireframe for sending to MetaTrader specification:
       //
       // For new trade:
-      // cmd|[uid] set [trade_type] [pair] [open price] [take profit price] [stop loss price] [lot size]
+      // cmd|[account name]|[uid] set [trade_type] [pair] [open price] [take profit price] [stop loss price] [lot size]
       // ex=> 
-      //   cmd|fdjksalr38wufsd= set 2 EURUSD 1.25 1.2503 1.2450
+      //   cmd|testaccount|fdjksalr38wufsd= set 2 EURUSD 1.25 1.2503 1.2450
       //   
       // For updating a trade:
-      // cmd|[uid] reset [ticket_id] [take profit price] [stop loss price]
+      // cmd|[account name]|[uid] reset [ticket_id] [take profit price] [stop loss price]
       // ex=> 
-      //   cmd|fdjksalr38wufsd= reset 43916144 1.2515 1.2502
+      //   cmd|testaccount|fdjksalr38wufsd= reset 43916144 1.2515 1.2502
       //   
       // For closing a trade:
-      // cmd|[uid] unset [ticket_id]
+      // cmd|[account name]|[uid] unset [ticket_id]
       // ex=> 
-      //   cmd|fdjksalr38wufsd= unset 43916144
+      //   cmd|testaccount|fdjksalr38wufsd= unset 43916144
       
       // If new trade operation is requested.
       //
@@ -213,7 +234,7 @@ int start()
       // 5 = (MQL4) OP_SELLSTOP - sell stop pending position.
       if (StringFind(message2, "reset", 0) != -1)
       {
-         // Pull out request uid. Message is formatted: "cmd|[uid] reset [ticket_id] [take profit price] [stop loss price]"
+         // Pull out request uid. Message is formatted: "cmd|[account name]|[uid] reset [ticket_id] [take profit price] [stop loss price]"
          uid = message_get_uid(message2);
          
          // ack uid.
@@ -223,7 +244,7 @@ int start()
       } 
       else if (StringFind(message2, "unset", 0) != -1)
       {
-         // Pull out request uid. Message is formatted: "cmd|[uid] unset [ticket_id]"
+         // Pull out request uid. Message is formatted: "cmd|[account name]|[uid] unset [ticket_id]"
          uid = message_get_uid(message2);
          
          // ack uid.
@@ -233,7 +254,7 @@ int start()
       } 
       else if (StringFind(message2, "set", 0) != -1)
       {
-         // Pull out request uid. Message is formatted: "cmd|[uid] set [trade_type] [pair] [open price] [take profit price] [stop loss price] [lot_size]"
+         // Pull out request uid. Message is formatted: "cmd|[account name]|[uid] set [trade_type] [pair] [open price] [take profit price] [stop loss price] [lot_size]"
          uid = message_get_uid(message2);
          
          // ack uid.
@@ -293,7 +314,7 @@ int start()
       // If a new element to be drawen is requested.
       if (StringFind(message2, "Draw", 0) != -1)
       {
-         // Pull out request uid. Message is formatted: "cmd|[uid] Draw [obj_type] [open time] [open price] [close time] [close price] [prediction]"
+         // Pull out request uid. Message is formatted: "cmd|[account name]|[uid] Draw [obj_type] [open time] [open price] [close time] [close price] [prediction]"
          uid = message_get_uid(message2);
          
          // Initialize array to hold the extracted settings. 
@@ -367,10 +388,13 @@ int start()
 ////////// to do the same thing using the helpers instead.
 
    // Publish current tick value.
-   string current_tick = "tick " + Bid + " " + Ask + " " + Time[0];
+   string current_tick = "tick|" + AccountName() + " " + Symbol() + " " + Bid + " " + Ask + " " + Time[0];
 
    // Publish the currently open orders.
    string current_orders = lookup_open_orders(); 
+   
+   // Publish account info.
+   string current_account_info = "account|" + AccountName() + " " + AccountLeverage() + " " + AccountBalance() + " " + AccountMargin() + " " + AccountFreeMargin();
    
    
 ////////// Publish data via main API //////////
@@ -419,7 +443,12 @@ int start()
    if(s_send(speaker, current_orders) == -1)
       Print("Error sending message: " + current_orders);
    else
-      Print("Published message: " + current_orders);
+      Print("Published message: " + current_orders);   
+   // Current account info.	
+   if(s_send(speaker, current_account_info) == -1)
+      Print("Error sending message: " + current_account_info);
+   else
+      Print("Published message: " + current_account_info );
    
 //----
    return(0);
@@ -427,12 +456,13 @@ int start()
   
 //+------------------------------------------------------------------+
 //| Pulls out the UID for the message. Messages are fomatted:
-//|      => "cmd|[uid] [some command]
+//|      => "cmd|[account name]|[uid] [some command]
 //+------------------------------------------------------------------+
 string message_get_uid(string message)
 {
-   // Pull out request uid. Message is formatted: "cmd|[uid] [some command]"
-   int uid_start = StringFind(message, "cmd|", 0) + 4;
+   // Pull out request uid. Message is formatted: "cmd|[accountname]|[uid] [some command]"
+   string uid_start_string = "cmd|" + AccountName() + "|";
+   int uid_start = StringFind(message, uid_start_string, 0) + StringLen(uid_start_string);
    int uid_end = StringFind(message, " ", 0) - uid_start;
    string uid = StringSubstr(message, uid_start, uid_end);
    
@@ -442,12 +472,12 @@ string message_get_uid(string message)
 
 //+------------------------------------------------------------------+
 //| Returns the currently open orders.
-//|      => "orders {:symbol => 'EURUSD', :type => 'sell', ...}, {... "
+//|      => "orders|testaccount1 {:symbol => 'EURUSD', :type => 'sell', ...}, {... "
 //+------------------------------------------------------------------+
 string lookup_open_orders()
 {
    // Initialize the orders string.
-   string current_orders = "orders ";
+   string current_orders = "orders|" + AccountName() + " ";
    
    // Look up the total number of open orders.
    int total_orders = OrdersTotal();
@@ -466,12 +496,12 @@ string lookup_open_orders()
 
 //+------------------------------------------------------------------+
 //| Sends a response to a command. Messages are fomatted:
-//|      => "response|[uid] [some command]
+//|      => "response|[account name]|[uid] [some command]
 //+------------------------------------------------------------------+
 bool send_response(string uid, string response)
 {
    // Compose response string.
-   string response_string = "response|" + uid + " " + response;
+   string response_string = "response|" + AccountName() + "|" + uid + " " + response;
    
    // Send the message.
    if(s_send(speaker, response_string) == -1)
