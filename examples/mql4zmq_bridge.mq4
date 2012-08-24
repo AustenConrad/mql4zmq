@@ -10,7 +10,7 @@
 
 // Runtime options to specify.
 extern string ZMQ_transport_protocol = "tcp";
-extern string ZMQ_server_address = "10.18.16.7";
+extern string ZMQ_server_address = "192.168.0.5";
 extern string ZMQ_inbound_port = "1986";
 extern string ZMQ_outbound_port = "1985";
 
@@ -20,8 +20,8 @@ extern string ZMQ_outbound_port = "1985";
 //+------------------------------------------------------------------+
 //| variable definitions                                             |
 //+------------------------------------------------------------------+
-int speaker,listener,context;
-string outbound_connection_string;
+int speaker,listener,context,i,start_position,end_position, ticket;
+string outbound_connection_string,keyword, uid;
 string inbound_connection_string;
 
 //+------------------------------------------------------------------+
@@ -79,8 +79,6 @@ int init()
       Print("Error connecting the listener to the central queue!");
       return(-1);
    }
-  
-
    
 //----
    return(0);
@@ -168,7 +166,6 @@ int start()
    //       string message2 = s_recv(listener);
    //
    string message2 = s_recv(listener, ZMQ_NOBLOCK);
-   string uid = "";
    
    if (message2 != "") // Will return NULL if no message was received.
    {
@@ -188,6 +185,111 @@ int start()
             Print("ERROR occurred sending response!");
       }
       
+      // Trade wireframe for sending to MetaTrader specification:
+      //
+      // For new trade:
+      // cmd|[uid] set [trade_type] [pair] [open price] [take profit price] [stop loss price] [lot size]
+      // ex=> 
+      //   cmd|fdjksalr38wufsd= set 2 EURUSD 1.25 1.2503 1.2450
+      //   
+      // For updating a trade:
+      // cmd|[uid] reset [ticket_id] [take profit price] [stop loss price]
+      // ex=> 
+      //   cmd|fdjksalr38wufsd= reset 43916144 1.2515 1.2502
+      //   
+      // For closing a trade:
+      // cmd|[uid] unset [ticket_id]
+      // ex=> 
+      //   cmd|fdjksalr38wufsd= unset 43916144
+      
+      // If new trade operation is requested.
+      //
+      // NOTE: MQL4's order type numbers are as follows:
+      // 0 = (MQL4) OP_BUY - buying position,
+      // 1 = (MQL4) OP_SELL - selling position,
+      // 2 = (MQL4) OP_BUYLIMIT - buy limit pending position,
+      // 3 = (MQL4) OP_BUYSTOP - buy stop pending position,
+      // 4 = (MQL4) OP_SELLLIMIT - sell limit pending position,
+      // 5 = (MQL4) OP_SELLSTOP - sell stop pending position.
+      if (StringFind(message2, "reset", 0) != -1)
+      {
+         // Pull out request uid. Message is formatted: "cmd|[uid] reset [ticket_id] [take profit price] [stop loss price]"
+         uid = message_get_uid(message2);
+         
+         // ack uid.
+         Print("uid: " + uid);
+         
+         Print("TODO: handle reset orders.");
+      } 
+      else if (StringFind(message2, "unset", 0) != -1)
+      {
+         // Pull out request uid. Message is formatted: "cmd|[uid] unset [ticket_id]"
+         uid = message_get_uid(message2);
+         
+         // ack uid.
+         Print("uid: " + uid);
+         
+         Print("TODO: handle reset orders.");
+      } 
+      else if (StringFind(message2, "set", 0) != -1)
+      {
+         // Pull out request uid. Message is formatted: "cmd|[uid] set [trade_type] [pair] [open price] [take profit price] [stop loss price] [lot_size]"
+         uid = message_get_uid(message2);
+         
+         // ack uid.
+         Print("uid: " + uid);
+         
+         // Initialize array to hold the extracted settings. 
+         string trade_settings[6] = {"type", "pair", "open_price" ,"take_profit", "stop_loss", "lot_size"};
+    
+         // Pull out the trade settings.
+         keyword = "set";
+         start_position = StringFind(message2, keyword, 0) + StringLen(keyword) + 1;
+         end_position = StringFind(message2, " ", start_position + 1);
+ 
+         for(i = 0; i < ArraySize(trade_settings); i++)
+         {
+            trade_settings[i] = StringSubstr(message2, start_position, end_position - start_position);
+            
+            // Protect against looping back around to the beginning of the string by exiting if the new
+            // start position would be a lower index then the current one.
+            if(StringFind(message2, " ", end_position) < start_position)
+               break;
+            else 
+            { 
+               start_position = StringFind(message2, " ", end_position);
+               end_position = StringFind(message2, " ", start_position + 1);
+            }
+         }
+         
+         Print(trade_settings[0] + " " + trade_settings[1] + " " + trade_settings[2] + " " + trade_settings[3] + " " + trade_settings[4] + " " + trade_settings[5]);
+         
+         // Open trade.
+         Print(NormalizeDouble(StrToDouble(trade_settings[3]), 5));
+         ticket = OrderSend(StringTrimLeft(trade_settings[1]),
+                                          StrToInteger(trade_settings[0]), 
+                                          NormalizeDouble(StrToDouble(trade_settings[5]), 5),
+                                          NormalizeDouble(StrToDouble(trade_settings[2]), 5),
+                                          3,
+                                          NormalizeDouble(StrToDouble(trade_settings[4]), 5),
+                                          NormalizeDouble(StrToDouble(trade_settings[3]), 5),
+                                          NULL,
+                                          0,
+                                          TimeCurrent() + 3600,
+                                          Green);
+         if(ticket<0)
+         {
+            Print("OrderSend failed with error #",GetLastError());
+            return(0);
+         }
+         else 
+         { 
+            // Send response.
+            if(send_response(uid, "Order has been processed.") == false)
+               Print("ERROR occurred sending response!");
+         }
+      }
+      
       // If a new element to be drawen is requested.
       if (StringFind(message2, "Draw", 0) != -1)
       {
@@ -198,11 +300,11 @@ int start()
          string object_settings[7] = {"object_type", "window", "open_time", "open_price" ,"close_time", "close_price", "prediction"};
          
          // Pull out the drawing settings.
-         string keyword = "Draw";
-         int start_position = StringFind(message2, keyword, 0) + StringLen(keyword) + 1;
-         int end_position = StringFind(message2, " ", start_position + 1);
+         keyword = "Draw";
+         start_position = StringFind(message2, keyword, 0) + StringLen(keyword) + 1;
+         end_position = StringFind(message2, " ", start_position + 1);
 
-         for(int i = 0; i < ArraySize(object_settings); i++)
+         for(i = 0; i < ArraySize(object_settings); i++)
          {
             object_settings[i] = StringSubstr(message2, start_position, end_position - start_position);
             
