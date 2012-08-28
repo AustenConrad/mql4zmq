@@ -229,8 +229,8 @@ int start()
       // 0 = (MQL4) OP_BUY - buying position,
       // 1 = (MQL4) OP_SELL - selling position,
       // 2 = (MQL4) OP_BUYLIMIT - buy limit pending position,
-      // 3 = (MQL4) OP_BUYSTOP - buy stop pending position,
-      // 4 = (MQL4) OP_SELLLIMIT - sell limit pending position,
+      // 3 = (MQL4) OP_SELLLIMIT - sell limit pending position,
+      // 4 = (MQL4) OP_BUYSTOP - buy stop pending position,
       // 5 = (MQL4) OP_SELLSTOP - sell stop pending position.
       if (StringFind(message2, "reset", 0) != -1)
       {
@@ -283,7 +283,7 @@ int start()
             }
          }
          
-         Print(trade_settings[0] + " " + trade_settings[1] + " " + trade_settings[2] + " " + trade_settings[3] + " " + trade_settings[4] + " " + trade_settings[5]);
+         Print(trade_settings[0] + " " + trade_settings[1] + ", Open: " + trade_settings[2] + ", TP: " + trade_settings[3] + ", SL: " + trade_settings[4] + ", Lots: " + trade_settings[5]);
          
          // Open trade.
          Print(NormalizeDouble(StrToDouble(trade_settings[3]), 5));
