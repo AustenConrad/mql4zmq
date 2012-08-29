@@ -291,6 +291,30 @@ int start()
          // ack uid.
          Print("uid: " + uid);
          
+         // Pull out the trade settings.
+         keyword = "unset";
+         start_position = StringFind(message2, keyword, 0) + StringLen(keyword) + 1;
+         end_position = StringFind(message2, " ", start_position + 1);
+ 
+         string ticket_id = StringSubstr(message2, start_position, end_position - start_position);
+            
+         // Select the requested order.
+         OrderSelect(StrToInteger(ticket_id),SELECT_BY_TICKET);
+         
+         // Send the oder close instructions.
+         bool close_ticket = OrderClose(OrderTicket(), OrderLots(), Ask, 3, Red);
+         
+         if(close_ticket == false)
+         {
+            Print("OrderSend failed with error #",GetLastError());
+            return(0);
+         }
+         else
+         {
+            Print("Closed trade: " + ticket_id);
+         }
+         
+         
          Print("TODO: handle reset orders.");
       } 
       else if (StringFind(message2, "set", 0) != -1)
