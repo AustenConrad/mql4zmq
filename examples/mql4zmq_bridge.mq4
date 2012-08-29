@@ -240,7 +240,48 @@ int start()
          // ack uid.
          Print("uid: " + uid);
          
-         Print("TODO: handle reset orders.");
+         // Initialize array to hold the extracted settings. 
+         string trade_update_settings[3] = {"ticket_id", "take_profit", "stop_loss"};
+    
+         // Pull out the trade settings.
+         keyword = "reset";
+         start_position = StringFind(message2, keyword, 0) + StringLen(keyword) + 1;
+         end_position = StringFind(message2, " ", start_position + 1);
+ 
+         for(i = 0; i < ArraySize(trade_update_settings); i++)
+         {
+            trade_update_settings[i] = StringSubstr(message2, start_position, end_position - start_position);
+            
+            // Protect against looping back around to the beginning of the string by exiting if the new
+            // start position would be a lower index then the current one.
+            if(StringFind(message2, " ", end_position) < start_position)
+               break;
+            else 
+            { 
+               start_position = StringFind(message2, " ", end_position);
+               end_position = StringFind(message2, " ", start_position + 1);
+            }
+         }
+
+         // Select the requested order.
+         OrderSelect(StrToInteger(trade_update_settings[0]),SELECT_BY_TICKET);
+         
+         // Send the order modify instructions.
+         bool update_ticket = OrderModify(OrderTicket(),
+                                     OrderOpenPrice(),
+                                     NormalizeDouble(StrToDouble(trade_update_settings[2]), 5),
+                                     NormalizeDouble(StrToDouble(trade_update_settings[1]), 5), 
+                                     0, 
+                                     Blue);
+         if(update_ticket == false)
+         {
+            Print("OrderSend failed with error #",GetLastError());
+            return(0);
+         }
+         else
+         {
+            Print("Trade: " + trade_update_settings[0] + " updated stop loss to: " + trade_update_settings[2] + " and take profit to: " + trade_update_settings[1]);
+         }
       } 
       else if (StringFind(message2, "unset", 0) != -1)
       {
