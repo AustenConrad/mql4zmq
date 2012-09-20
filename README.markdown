@@ -12,7 +12,7 @@ See Publish/Subscribe example in [examples](https://github.com/AustenConrad/mql4
 
 0. Download and install [Microsoft Visual C++ Express 2010](http://go.microsoft.com/?linkid=9709949 "Microsoft's Visual C++ 2010 Express Download Link.") if you don't already have it. 
 
-1. Download or git clone the [ZeroMQ v2.1 source](https://github.com/zeromq/zeromq2-1/ "ZeroMQ v2.1 github.")
+1. Download the [ZeroMQ v2.1.11 source](http://download.zeromq.org/zeromq-2.1.11.zip "ZeroMQ v2.1.1 source.")
 
 2. Download or git clone the [MQL4ZMQ source](https://github.com/AustenConrad/mql4zmq/ "mql4zmq github.")
 
