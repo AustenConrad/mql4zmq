@@ -1,5 +1,4 @@
-# mql4zmq examples
-
+# mql4zmq examples	
 ## mql4zmq.mq4:
 
 This is an example EA that shows how to use mql4zmq to publish and subscribe messages each tick.
@@ -20,6 +19,10 @@ They also demonstrate the key point of the mql4zmq project which is that the use
 MetaTrader opens up the door to writing your trading code in any of the 30+ languages for which there is a [ZeroMQ binding.](http://www.zeromq.org/bindings:_start "ZeroMQ language bindings.")
 
 With very little work you can expand the mql4zmq EA to be a full fledged bridge.
+
+## python example (Contributed by Keith K.):
+This script digests channel "ticks" from the mql4zmq EA and timestamps each locally 
+in microseconds (formatted to nicely work with matplotlib via the date2num function). 
 
 ####Example Usage:
 
