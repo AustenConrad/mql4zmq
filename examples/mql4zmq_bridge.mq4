@@ -83,8 +83,8 @@ int init()
    }
    
    // Send Notification that bridge is up.
-   // Format: bridge|testaccount UP short EURUSD
-   string bridge_up = "bridge|" + AccountName() + " UP " + trade_direction + " " + Symbol();
+   // Format: bridge|testaccount UP short EURUSD 1355775144
+   string bridge_up = "bridge|" + AccountName() + " UP " + trade_direction + " " + Symbol() + " " + TimeCurrent();
    if(s_send(speaker, bridge_up) == -1)
       Print("Error sending message: " + bridge_up);
    else
