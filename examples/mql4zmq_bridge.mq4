@@ -269,8 +269,8 @@ int start()
          // Send the order modify instructions.
          bool update_ticket = OrderModify(OrderTicket(),
                                      OrderOpenPrice(),
-                                     NormalizeDouble(StrToDouble(trade_update_settings[2]), 5),
-                                     NormalizeDouble(StrToDouble(trade_update_settings[1]), 5), 
+                                     NormalizeDouble(StrToDouble(trade_update_settings[2]), Digits),
+                                     NormalizeDouble(StrToDouble(trade_update_settings[1]), Digits), 
                                      0, 
                                      Blue);
          if(update_ticket == false)
@@ -351,18 +351,18 @@ int start()
          Print(trade_settings[0] + " " + trade_settings[1] + ", Open: " + trade_settings[2] + ", TP: " + trade_settings[3] + ", SL: " + trade_settings[4] + ", Lots: " + trade_settings[5]);
          
          // Open trade.
-         Print(NormalizeDouble(StrToDouble(trade_settings[3]), 5));
+         Print(NormalizeDouble(StrToDouble(trade_settings[3]), Digits));
          ticket = OrderSend(StringTrimLeft(trade_settings[1]),
                                           StrToInteger(trade_settings[0]), 
-                                          NormalizeDouble(StrToDouble(trade_settings[5]), 5),
-                                          NormalizeDouble(StrToDouble(trade_settings[2]), 5),
+                                          NormalizeDouble(StrToDouble(trade_settings[5]), Digits),
+                                          NormalizeDouble(StrToDouble(trade_settings[2]), Digits),
                                           3,
-                                          NormalizeDouble(StrToDouble(trade_settings[4]), 5),
-                                          NormalizeDouble(StrToDouble(trade_settings[3]), 5),
+                                          NormalizeDouble(StrToDouble(trade_settings[4]), Digits),
+                                          NormalizeDouble(StrToDouble(trade_settings[3]), Digits),
                                           NULL,
                                           0,
                                           TimeCurrent() + 3600,
-                                          Green);
+                                          Green); 
          if(ticket<0)
          {
             Print("OrderSend failed with error #",GetLastError());
