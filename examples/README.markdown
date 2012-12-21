@@ -34,6 +34,6 @@ This script digests channel "ticks" from the mql4zmq EA and timestamps each loca
 in microseconds (formatted to nicely work with matplotlib via the date2num function).
 
 ## mql4zmq_bridge.mq4 (STILL IN DEVELOPMENT)
-This is an example bridge to show easy it is to develop one using MQL4ZMQ. I am only adding parts
+This is an example bridge to show how easy it is to develop one using MQL4ZMQ. I am only adding parts
 as my current projects need them. Eventually, this will be a complete example. Until then, it will
 be largely undocumented; for reference only.
