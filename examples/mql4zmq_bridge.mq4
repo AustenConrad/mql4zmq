@@ -1,6 +1,6 @@
 //+------------------------------------------------------------------+
 //|                                               mql4zmq_bridge.mq4 |
-//|                                  Copyright © 2012, Austen Conrad |
+//|                             Copyright © 2012-2013, Austen Conrad |
 //|                                                                  |
 //| FOR ZEROMQ USE NOTES PLEASE REFERENCE:                           |
 //|                           http://api.zeromq.org/2-1:_start       |
@@ -304,7 +304,15 @@ int start()
          OrderSelect(StrToInteger(ticket_id),SELECT_BY_TICKET);
          
          // Send the oder close instructions.
-         bool close_ticket = OrderClose(OrderTicket(), OrderLots(), Ask, 3, Red);
+         bool close_ticket;
+         if (OrderType() == OP_BUY || OrderType() == OP_BUYLIMIT || OrderType() == OP_BUYSTOP)
+         {
+            close_ticket = OrderClose(OrderTicket(), OrderLots(), Bid, 3, Red);
+         }
+         else if (OrderType() == OP_SELL || OrderType() == OP_SELLLIMIT || OrderType() == OP_SELLSTOP)
+         {
+            close_ticket = OrderClose(OrderTicket(), OrderLots(), Ask, 3, Red);
+         }
          
          if(close_ticket == false)
          {
