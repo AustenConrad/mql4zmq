@@ -14,6 +14,8 @@ extern string ZMQ_transport_protocol = "tcp";
 extern string ZMQ_server_address = "192.168.0.5";
 extern string ZMQ_inbound_port = "1986";
 extern string ZMQ_outbound_port = "1985";
+extern int EMA_long = 180;
+extern int EMA_short = 60;
 
 // Include the libzmq.dll abstration wrapper.
 #include <mql4zmq.mqh>
@@ -461,6 +463,9 @@ int start()
    // Publish account info.
    string current_account_info = "account|" + AccountName() + " " + AccountLeverage() + " " + AccountBalance() + " " + AccountMargin() + " " + AccountFreeMargin();
    
+   // Publish currently requested EMA's.
+   string current_ema_info = "ema|" + AccountName() + " " + Symbol() + " " + EMA_long + " " + iMA(Symbol(),0,EMA_long,0,MODE_EMA,PRICE_MEDIAN,0) + " " + EMA_short + " " + iMA(Symbol(),0,EMA_short,0,MODE_EMA,PRICE_MEDIAN,0);
+
    
 ////////// Publish data via main API //////////
 /*     
@@ -514,7 +519,11 @@ int start()
       Print("Error sending message: " + current_account_info);
    else
       Print("Published message: " + current_account_info );
-   
+   // Current EMA info.	
+   if(s_send(speaker, current_ema_info) == -1)
+      Print("Error sending message: " + current_ema_info);
+   else
+      Print("Published message: " + current_ema_info );
 //----
    return(0);
   }
