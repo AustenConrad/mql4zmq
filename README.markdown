@@ -2,7 +2,7 @@
 
 The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 documentation homepage.") bindings for the [ZeroMQ](http://zeromq.org/ "ZeroMQ homepage.") networking library. 
 
-IMPORTANT NOTE: You are free to use MQL4ZMQ in your trading projects as long as you agree that no warranty is provided whatsoever.
+Licensed under the MIT License. See [LICENSE](https://github.com/AustenConrad/mql4zmq/blob/master/LICENSE) for more information.
 
 ### Example Usage:
 
