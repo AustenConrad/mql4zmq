@@ -305,13 +305,17 @@ int start()
          
          // Send the oder close instructions.
          bool close_ticket;
-         if (OrderType() == OP_BUY || OrderType() == OP_BUYLIMIT || OrderType() == OP_BUYSTOP)
+         if (OrderType() == OP_BUY)
          {
             close_ticket = OrderClose(OrderTicket(), OrderLots(), Bid, 3, Red);
          }
-         else if (OrderType() == OP_SELL || OrderType() == OP_SELLLIMIT || OrderType() == OP_SELLSTOP)
+         else if (OrderType() == OP_SELL)
          {
             close_ticket = OrderClose(OrderTicket(), OrderLots(), Ask, 3, Red);
+         }
+         else if (OrderType() == OP_BUYLIMIT || OrderType() == OP_BUYSTOP || OrderType() == OP_SELLLIMIT || OrderType() == OP_SELLSTOP)
+         {
+            close_ticket = OrderDelete(OrderTicket());
          }
          
          if(close_ticket == false)
