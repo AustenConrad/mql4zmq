@@ -223,7 +223,7 @@ int start()
       // For updating an order:
       // cmd|[account name]|[uid] reset [ticket_id] [take profit price] [stop loss price] [open price]
       // ex=> 
-      //   cmd|testaccount|fdjksalr38wufsd= reset 43916144 1.2515 1.2502
+      //   cmd|testaccount|fdjksalr38wufsd= reset 43916144 1.2515 1.2502 1.2507
       //   
       // For closing a trade or order:
       // cmd|[account name]|[uid] unset [ticket_id]
@@ -269,8 +269,6 @@ int start()
                end_position = StringFind(message2, " ", start_position + 1);
             }
          }
-
-Print("HERE ticket:" + trade_update_settings[0] + " TP:" + trade_update_settings[1] + " SL:" + trade_update_settings[2] + " OP:" + trade_update_settings[3]);
 
          // Select the requested order.
          OrderSelect(StrToInteger(trade_update_settings[0]),SELECT_BY_TICKET);
