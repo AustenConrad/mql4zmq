@@ -5,7 +5,7 @@
 //| FOR ZEROMQ USE NOTES PLEASE REFERENCE:                           |
 //|                           http://api.zeromq.org/2-1:_start       |
 //+------------------------------------------------------------------+
-#property copyright "Copyright © 2012, Austen Conrad"
+#property copyright "Copyright © 2012, 2013 Austen Conrad"
 #property link      "http://www.mql4zmq.org"
 
 // Runtime options to specify.
@@ -210,7 +210,7 @@ int start()
       
       // Trade wireframe for sending to MetaTrader specification:
       //
-      // For new trade:
+      // For new trade or order:
       // cmd|[account name]|[uid] set [trade_type] [pair] [open price] [take profit price] [stop loss price] [lot size]
       // ex=> 
       //   cmd|testaccount|fdjksalr38wufsd= set 2 EURUSD 1.25 1.2503 1.2450
@@ -219,8 +219,13 @@ int start()
       // cmd|[account name]|[uid] reset [ticket_id] [take profit price] [stop loss price]
       // ex=> 
       //   cmd|testaccount|fdjksalr38wufsd= reset 43916144 1.2515 1.2502
+      //
+      // For updating an order:
+      // cmd|[account name]|[uid] reset [ticket_id] [take profit price] [stop loss price] [open price]
+      // ex=> 
+      //   cmd|testaccount|fdjksalr38wufsd= reset 43916144 1.2515 1.2502
       //   
-      // For closing a trade:
+      // For closing a trade or order:
       // cmd|[account name]|[uid] unset [ticket_id]
       // ex=> 
       //   cmd|testaccount|fdjksalr38wufsd= unset 43916144
@@ -236,20 +241,20 @@ int start()
       // 5 = (MQL4) OP_SELLSTOP - sell stop pending position.
       if (StringFind(message2, "reset", 0) != -1)
       {
-         // Pull out request uid. Message is formatted: "cmd|[account name]|[uid] reset [ticket_id] [take profit price] [stop loss price]"
+         // Pull out request uid. Message is formatted: "cmd|[account name]|[uid] reset [ticket_id] [take profit price] [stop loss price] [optional open price]"
          uid = message_get_uid(message2);
          
          // ack uid.
          Print("uid: " + uid);
          
          // Initialize array to hold the extracted settings. 
-         string trade_update_settings[3] = {"ticket_id", "take_profit", "stop_loss"};
+         string trade_update_settings[4] = {"ticket_id", "take_profit", "stop_loss", "open_price"};
     
          // Pull out the trade settings.
          keyword = "reset";
          start_position = StringFind(message2, keyword, 0) + StringLen(keyword) + 1;
          end_position = StringFind(message2, " ", start_position + 1);
- 
+         
          for(i = 0; i < ArraySize(trade_update_settings); i++)
          {
             trade_update_settings[i] = StringSubstr(message2, start_position, end_position - start_position);
@@ -265,16 +270,35 @@ int start()
             }
          }
 
+Print("HERE ticket:" + trade_update_settings[0] + " TP:" + trade_update_settings[1] + " SL:" + trade_update_settings[2] + " OP:" + trade_update_settings[3]);
+
          // Select the requested order.
          OrderSelect(StrToInteger(trade_update_settings[0]),SELECT_BY_TICKET);
+
+         // Since 'open_price' was not received, we know that we're updating a trade.
+         bool update_ticket = false;
+         if(trade_update_settings[3] == "open_price")
+         {
          
-         // Send the order modify instructions.
-         bool update_ticket = OrderModify(OrderTicket(),
+            // Send the trade modify instructions.
+            update_ticket = OrderModify(OrderTicket(),
                                      OrderOpenPrice(),
                                      NormalizeDouble(StrToDouble(trade_update_settings[2]), Digits),
                                      NormalizeDouble(StrToDouble(trade_update_settings[1]), Digits), 
                                      0, 
+                                     Blue); 
+         // Since 'open_price' was received, we know that we're updating an order.
+         } else {
+         Print(NormalizeDouble(StrToDouble(trade_update_settings[3]), Digits));
+            // Send the order modify instructions.
+            update_ticket = OrderModify(OrderTicket(),
+                                     NormalizeDouble(StrToDouble(trade_update_settings[3]), Digits),
+                                     NormalizeDouble(StrToDouble(trade_update_settings[2]), Digits),
+                                     NormalizeDouble(StrToDouble(trade_update_settings[1]), Digits), 
+                                     0, 
                                      Blue);
+         }
+                  
          if(update_ticket == false)
          {
             Print("OrderSend failed with error #",GetLastError());
@@ -282,7 +306,14 @@ int start()
          }
          else
          {
-            Print("Trade: " + trade_update_settings[0] + " updated stop loss to: " + trade_update_settings[2] + " and take profit to: " + trade_update_settings[1]);
+            if(trade_update_settings[3] == "open_price")
+            {
+               Print("Trade: " + trade_update_settings[0] + " updated stop loss to: " + trade_update_settings[2] + " and take profit to: " + trade_update_settings[1]);
+            }
+            else
+            {
+               Print("Order: " + trade_update_settings[0] + " updated stop loss to: " + trade_update_settings[2] + ", take profit to: " + trade_update_settings[1] + ", and open price to: " + trade_update_settings[3]);
+            }
          }
       } 
       else if (StringFind(message2, "unset", 0) != -1)
@@ -328,8 +359,6 @@ int start()
             Print("Closed trade: " + ticket_id);
          }
          
-         
-         Print("TODO: handle reset orders.");
       } 
       else if (StringFind(message2, "set", 0) != -1)
       {
