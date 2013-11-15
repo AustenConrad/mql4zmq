@@ -312,6 +312,10 @@ int start()
             {
                Print("Order: " + trade_update_settings[0] + " updated stop loss to: " + trade_update_settings[2] + ", take profit to: " + trade_update_settings[1] + ", and open price to: " + trade_update_settings[3]);
             }
+            
+            // Send response.
+            if(send_response(uid, "Order has been processed.") == false)
+               Print("ERROR occurred sending response!");
          }
       } 
       else if (StringFind(message2, "unset", 0) != -1)
@@ -354,7 +358,12 @@ int start()
          }
          else
          {
+         
             Print("Closed trade: " + ticket_id);
+            
+            // Send response.
+            if(send_response(uid, "Order has been processed.") == false)
+               Print("ERROR occurred sending response!");
          }
          
       } 
