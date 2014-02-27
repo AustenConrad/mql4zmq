@@ -5,6 +5,13 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright © 2012, Austen Conrad"
 #property link      "http://www.mql4zmq.org"
+
+#import "kernel32.dll"
+   int lstrlenA(int);
+   void RtlMoveMemory(uchar & arr[], int, int);
+   int LocalFree(int); // May need to be changed depending on how the DLL allocates memory
+#import
+
 #import "mql4zmq.dll"
 
 //+--------------------------------------------------------------------------------+
@@ -33,7 +40,7 @@ string mql4zmq_strerror(int errnum);
 // Messages.
 int mql4zmq_msg_init(int &msg[]);
 int mql4zmq_msg_init_size (int &msg[], int size);
-int mql4zmq_msg_init_data (int &msg[], string data, int size);
+int mql4zmq_msg_init_data (int &msg[], uchar & data[], int size);
 int mql4zmq_msg_close (int $msg[]);
 int mql4zmq_msg_move (int dest, int src);
 int mql4zmq_msg_copy (int dest, int src);
@@ -47,10 +54,10 @@ int mql4zmq_term (int context);
 // Sockets.
 int mql4zmq_socket (int context, int type);
 int mql4zmq_close (int socket);
-int mql4zmq_setsockopt (int socket, int option, string optval, int optvallen);
-int mql4zmq_getsockopt (int socket, int option, string optval, int optvallen);
-int mql4zmq_bind (int socket, string addr);
-int mql4zmq_connect (int socket, string addr);
+int mql4zmq_setsockopt (int socket, int option, uchar &  optval[], int optvallen);
+int mql4zmq_getsockopt (int socket, int option, uchar &  optval[], int optvallen);
+int mql4zmq_bind (int socket, uchar &  addr[]);
+int mql4zmq_connect (int socket, uchar & addr[]);
 int mql4zmq_send (int socket, int &msg[], int flags);
 int mql4zmq_recv (int socket, int &msg[], int flags);
 
@@ -61,9 +68,9 @@ int mql4zmq_poll (int items, int nitems, int timeout);
 int mql4zmq_device (int device, int insocket, int outsocket);
 
 // Helper Functions.
-string mql4s_recv (int socket, int flags);
-int mql4s_send (int socket, string text); 
-int mql4s_sendmore (int socket, string text); 
+int mql4s_recv (int socket, int flags);
+int mql4s_send (int socket, uchar & text[]); 
+int mql4s_sendmore (int socket, uchar & text[]); 
 
 //+---------------------------------------------------------------------------------+
 //| Renaming of functions to original naming structure. Use these when buiding 
@@ -100,7 +107,9 @@ int zmq_msg_init_size (int &msg[], int size)
 
 int zmq_msg_init_data (int &msg[], string data, int size)
 {
-   return(mql4zmq_msg_init_data(msg, data, size));
+   uchar dataChar[];
+   StringToCharArray(data, dataChar);
+   return(mql4zmq_msg_init_data(msg, dataChar, size));
 }
 
 int zmq_msg_close (int &msg[])
@@ -152,24 +161,32 @@ int zmq_close (int socket)
 
 int zmq_setsockopt (int socket, int option, string optval)
 {
+   uchar optvalChar[];
+   StringToCharArray(optval, optvalChar);
    // Automatically calculating the length of the option value.
-   return(mql4zmq_setsockopt(socket, option, optval, StringLen(optval)));
+   return(mql4zmq_setsockopt(socket, option, optvalChar, StringLen(optval)));
 }
 
 int zmq_getsockopt (int socket, int option, string optval)
 {
+   uchar optvalChar[];
+   StringToCharArray(optval, optvalChar);     
    // Automatically calculating the length of the option value.
-   return(mql4zmq_getsockopt(socket, option, optval, StringLen(optval)));
+   return(mql4zmq_getsockopt(socket, option, optvalChar, StringLen(optval)));
 }
 
 int zmq_bind (int socket, string addr)
 {
-   return(mql4zmq_bind(socket, addr));
+   uchar addrChar[];
+   StringToCharArray(addr, addrChar); 
+   return(mql4zmq_bind(socket, addrChar));
 }
 
 int zmq_connect (int socket, string addr)
 {
-   return(mql4zmq_connect(socket, addr));
+   uchar addrChar[];
+   StringToCharArray(addr, addrChar);    
+   return(mql4zmq_connect(socket, addrChar));
 }
 
 // Defaults to no flags; meaning the flag is an optional paramater. 
@@ -201,15 +218,47 @@ int zmq_device (int device, int insocket, int outsocket)
 // zhelper functions.
 string s_recv (int socket, int flags=0)
 {
-   return(mql4s_recv(socket, flags));
+   // Call the DLL function and get its block of string memory as an int pointer to the
+   // memory rather than as a string    
+   int recvPtr = mql4s_recv(socket, flags);
+   
+   // Get the length of the string 
+   int mssgLen = lstrlenA(recvPtr);  
+
+   // if message length is 0, leave, otherwise windows error thrown  
+   if(mssgLen<1) return(""); 
+ 
+   // Create a uchar[] array whose size is the string length (plus null terminator)
+   uchar stringChar[];
+   ArrayResize(stringChar, mssgLen+1);
+   
+   // Use the Win32 API to copy the string from the block returned by the DLL
+   // into the uchar[] array   
+   RtlMoveMemory(stringChar, recvPtr, mssgLen+1);
+   
+   // Convert the uchar[] array to a message string
+   string mssg = CharArrayToString(stringChar);
+   
+   // Free the string memory returned by the DLL. This step can be removed but, without it,
+   // there will be a memory leak.
+   // The correct method for freeing the string *depends on how the DLL allocated the memory*
+   // The following assumes that the DLL has used LocalAlloc (or an indirect equivalent). If not,
+   // then the following line may not fix the leak, and may even cause a crash.   
+   LocalFree(recvPtr);
+   
+   return(mssg);
 }
 int s_send (int socket, string text)
 {
-   return(mql4s_send(socket, text));
+   uchar textChar[];
+   StringToCharArray(text, textChar);     
+   return(mql4s_send(socket, textChar));
 }
 int s_sendmore (int socket, string text)
 {
-   return(mql4s_sendmore(socket, text));
+   uchar textChar[];
+   StringToCharArray(text, textChar);     
+   return(mql4s_sendmore(socket, textChar));
 }
  
 
