@@ -4,6 +4,11 @@ The goal of this project is to provide [MQL4](http://docs.mql4.com/ "MQL4 docume
 
 Licensed under the MIT License. See [LICENSE](https://github.com/AustenConrad/mql4zmq/blob/master/LICENSE) for more information.
 
+### Version notes:
+If you are using MetaTrader build 509 or earlier, use stable [release 1.0.1](https://github.com/AustenConrad/mql4zmq/releases/tag/v1.0.1)
+
+If you are using MetaTrader build 600+, use the latest beta [2.0.0-pre](https://github.com/AustenConrad/mql4zmq/tree/2.0.0-pre) 
+
 ### Example Usage:
 
 See Publish/Subscribe example in [examples](https://github.com/AustenConrad/mql4zmq/tree/master/examples "MQL4ZMQ Examples folder at Master.") folder. In general the use is exactly as [documented](http://api.zeromq.org/2-1:_start "ZeroMQ API Documentation.") by ZeroMQ and described in the "C" examples in the [ZGuide](http://zguide.zeromq.org/page:all "ZeroMQ ZGuide.")
